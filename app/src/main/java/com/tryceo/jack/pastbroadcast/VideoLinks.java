@@ -27,7 +27,6 @@ public class VideoLinks extends Activity {
     ProgressDialog process;
     List<String> linksArray;
     private static final String apiURL = "https://api.twitch.tv/api/videos/a%s";
-    public final static String EXTRA_MESSAGE = "com.tryceo.jack.pastbroadcast";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +75,13 @@ public class VideoLinks extends Activity {
 
     private class getLinks extends AsyncTask<String, Object, List<Chunk>> {
         @Override
-        protected List<Chunk> doInBackground(String... urls){
+        protected List<Chunk> doInBackground(String... urls) {
             List<Chunk> chunks = new ArrayList<Chunk>();
             try {
                 URL url = new URL(urls[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 InputStream content = new BufferedInputStream(urlConnection.getInputStream());
                 chunks = TwitchVideoJSONParser.getChunks(content);
-
                 urlConnection.disconnect();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -94,13 +92,13 @@ public class VideoLinks extends Activity {
         @Override
         protected void onPostExecute(List<Chunk> result) {
             adapter.clear();
-            List<String> videos= new ArrayList<String>();
-            List<String> videoLinks= new ArrayList<String>();
-            for (int i =0; i<result.size(); i++){
+            List<String> videos = new ArrayList<String>();
+            List<String> videoLinks = new ArrayList<String>();
+            for (int i = 0; i < result.size(); i++) {
                 int secs = result.get(i).getLength();
-                int min = secs/60;
-                int sec = secs%60;
-                videos.add(String.format("Video #%d   Length: %d:%s", i+1, min, sec));
+                int min = secs / 60;
+                int sec = secs % 60;
+                videos.add(String.format("Video #%d   Length: %d:%s", i + 1, min, sec));
                 videoLinks.add(result.get(i).getURL());
             }
             linksArray = videoLinks;

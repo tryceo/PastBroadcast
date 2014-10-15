@@ -21,8 +21,7 @@ public class TwitchVideoJSONParser {
             while (reader.hasNext()) {
                 String name = reader.nextName();
                 if (name.equals("chunks")) {
-                    chunks = readChunks(reader);
-                    return chunks;
+                    return readChunks(reader);
                 } else {
                     reader.skipValue();
                 }
@@ -58,11 +57,11 @@ public class TwitchVideoJSONParser {
         reader.beginObject();
         while (reader.hasNext()) {
             String name = reader.nextName();
-            if (name.equals("url")){
+            if (name.equals("url")) {
                 chunk.setURL(reader.nextString());
-            } else if (name.equals("length")){
+            } else if (name.equals("length")) {
                 chunk.setLength(reader.nextInt());
-            } else{
+            } else {
                 reader.skipValue();
             }
         }
@@ -70,7 +69,58 @@ public class TwitchVideoJSONParser {
         return chunk;
     }
 
+    public static List<Video> getVideos(InputStream in) throws IOException {
+        JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+        List<Video> videos = new ArrayList<Video>();
+        try {
+            reader.beginObject();
+            while (reader.hasNext()) {
+                String name = reader.nextName();
+                if (name.equals("videos")) {
+                    return readVideos(reader);
+                } else {
+                    reader.skipValue();
+                }
+            }
+            reader.endObject();
+        } finally {
+            reader.close();
+        }
+        return videos;
+    }
 
+    private static List<Video> readVideos(JsonReader reader) throws IOException {
+        List<Video> videos = new ArrayList<Video>();
+        reader.beginArray();
+        while (reader.hasNext()) {
+            videos.add(readVideo(reader));
+        }
+        reader.endArray();
+        return videos;
+    }
+
+    private static Video readVideo(JsonReader reader) throws IOException {
+        reader.beginObject();
+        Video v = new Video();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+            if (name.equals("title")) {
+                v.setTitle(reader.nextString());
+            } else if (name.equals("_id")) {
+                v.setId(reader.nextString());
+            } else if (name.equals("recorded_at")) {
+                v.setId(reader.nextString());
+            } else if (name.equals("length")) {
+                v.setLength(reader.nextInt());
+            } else if (name.equals("preview")) {
+                v.setPreview(reader.nextString());
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        return v;
+    }
 }
 
 
