@@ -3,7 +3,9 @@ PastBroadcast
 
 View past broadcast videos on twitch.tv
 
-Enter the username of the streamer you want, IE: tsm_theoddone
+Enter the username of the streamer you want (e.g. tsm_oddone)
+
+Requires an video player that supports flv (e.g. MX Player, VLC)
 
 Try it out at https://github.com/tryceo/PastBroadcast/releases
 
