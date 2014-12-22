@@ -3,6 +3,5 @@ PastBroadcast
 
 View past broadcast videos on twitch.tv
 
-Enter the video id from http://www.twitch.tv/CHANNEL/b/#########.
+Enter the username of the streamer you want, IE: tsm_theoddone
 
-Working on retrieval of past broadcasts from channel
