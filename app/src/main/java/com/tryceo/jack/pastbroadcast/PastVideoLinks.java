@@ -55,21 +55,7 @@ public class PastVideoLinks extends Activity {
         adapter = new VideoAdapter(videoArray);
         ListView listView = (ListView) findViewById(R.id.videolist);
         listView.setAdapter(adapter);
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
 
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int i1, int i2, int i3) {
-
-                if (i3 <= i1+i2){
-                    getTwitchVideos  task = new getTwitchVideos();
-                    task.execute(String.format(apiURL, message, i3));
-                }
-            }
-        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -85,7 +71,6 @@ public class PastVideoLinks extends Activity {
         task.execute(String.format(apiURL, message, 0));
         process.show();
     }
-
 
 
     public class VideoAdapter extends BaseAdapter {
@@ -120,6 +105,7 @@ public class PastVideoLinks extends Activity {
 
             TextView title = (TextView) view.findViewById(R.id.title);
             TextView recordedAt = (TextView) view.findViewById(R.id.recordedAt);
+            TextView length = (TextView) view.findViewById(R.id.length);
             ImageView preview = (ImageView) view.findViewById(R.id.previewImage);
 
             ImageLoader imageLoader = ImageLoader.getInstance();
@@ -130,6 +116,11 @@ public class PastVideoLinks extends Activity {
 
             recordedAt.setText(videos.get(i).getRecordedAt());
 
+            int secs = videos.get(i).getLength();
+            int min = secs / 60;
+            int sec = secs % 60;
+
+            length.setText(String.format("Video #%d   Length: %d:%s", i + 1, min, sec));
 
             return view;
         }
