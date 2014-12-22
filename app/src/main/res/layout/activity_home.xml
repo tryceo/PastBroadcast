@@ -10,17 +10,29 @@
 
 
     <EditText android:id="@+id/edit_message"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/edit_message" />
+
+
+    <Spinner
+        android:id="@+id/streaming_site"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_message"
+    />
 
     <Button
         android:id="@+id/button_search"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_below="@id/edit_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_search"
         android:onClick="searchNumber"/>
+
+
+
 
 </RelativeLayout>

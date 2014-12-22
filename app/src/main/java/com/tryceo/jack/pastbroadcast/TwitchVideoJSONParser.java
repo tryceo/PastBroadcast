@@ -63,6 +63,7 @@ public class TwitchVideoJSONParser {
                 chunk.setLength(reader.nextInt());
             } else {
                 reader.skipValue();
+
             }
         }
         reader.endObject();
@@ -80,6 +81,7 @@ public class TwitchVideoJSONParser {
                     return readVideos(reader);
                 } else {
                     reader.skipValue();
+
                 }
             }
             reader.endObject();
@@ -109,7 +111,7 @@ public class TwitchVideoJSONParser {
             } else if (name.equals("_id")) {
                 v.setId(reader.nextString());
             } else if (name.equals("recorded_at")) {
-                v.setId(reader.nextString());
+                v.setRecordedAt(reader.nextString());
             } else if (name.equals("length")) {
                 v.setLength(reader.nextInt());
             } else if (name.equals("preview")) {

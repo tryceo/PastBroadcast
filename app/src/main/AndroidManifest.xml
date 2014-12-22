@@ -3,6 +3,7 @@
     package="com.tryceo.jack.pastbroadcast" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -13,18 +14,20 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".VideoLinks"
-            android:label="@string/title_activity_video_links" >
+            android:name=".PastVideoLinks"
+            android:label="@string/title_activity_past_video_links"
+            android:parentActivityName =".Home">
         </activity>
         <activity
-            android:name=".LinksView"
-            android:label="@string/title_activity_links_view" >
+            android:name=".VideoLinks"
+            android:label="@string/title_activity_video_links"
+            android:parentActivityName=".PastVideoLinks">
         </activity>
+
     </application>
 
 </manifest>

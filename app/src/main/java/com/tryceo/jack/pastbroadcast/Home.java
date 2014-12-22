@@ -11,7 +11,8 @@ import android.widget.EditText;
 
 public class Home extends Activity {
 
-    public final static String EXTRA_MESSAGE = "com.tryceo.jack.pastbroadcast";
+    public final static String CHANNEL_NAME = "Channel Name";
+    public final static String STREAMING_WEBSITE = "Streaming Website";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +41,11 @@ public class Home extends Activity {
     }
 
     public void searchNumber(View view) {
-        Intent intent = new Intent(this, VideoLinks.class);
+        Intent intent = new Intent(this, PastVideoLinks.class);
         EditText editText = (EditText) findViewById(R.id.edit_message);
         String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra(CHANNEL_NAME, message);
+        intent.putExtra(STREAMING_WEBSITE, message);
         startActivity(intent);
     }
 }
