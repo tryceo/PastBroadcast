@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,9 +35,11 @@ public class PastVideoLinks extends Activity {
     private BaseAdapter adapter;
     public ProgressDialog process;
     public static List<Video> videoArray;
-    private static final String apiURL = "https://api.twitch.tv/kraken/channels/%s/videos?limit=100&offset=%d&broadcasts=true";
+    private static final String TWITCHAPIURL = "https://api.twitch.tv/kraken/channels/%s/videos?limit=100&offset=%d&broadcasts=true";
+    private static final String AZUBUAPIURL = "http://www.azubu.tv/api/channel/%s/video/list?offset=0&limit=100&sortBy=date&sortType=desc";
     public final static String ID = "Video ID";
-    public static String message;
+    public static String channelMessage;
+    public static String websiteMessage;
 
 
     @Override
@@ -46,7 +49,8 @@ public class PastVideoLinks extends Activity {
         setContentView(R.layout.activity_past_video_links);
 
         Intent intent = getIntent();
-        message = intent.getStringExtra(Home.CHANNEL_NAME);
+        channelMessage = intent.getStringExtra(Home.CHANNEL_NAME);
+        websiteMessage = intent.getStringExtra(Home.STREAMING_WEBSITE);
         process = new ProgressDialog(this);
         process.setTitle("Loading...");
         process.setMessage("Please Wait");
@@ -56,19 +60,36 @@ public class PastVideoLinks extends Activity {
         ListView listView = (ListView) findViewById(R.id.videolist);
         listView.setAdapter(adapter);
 
+        if (websiteMessage.equals("Twitch.tv")){
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Intent intent = new Intent(PastVideoLinks.this, VideoLinks.class);
+                    intent.putExtra(PastVideoLinks.ID, videoArray.get(i).getId());
+                    startActivity(intent);
+                }
+            });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(PastVideoLinks.this, VideoLinks.class);
-                intent.putExtra(PastVideoLinks.ID, videoArray.get(i).getId());
-                startActivity(intent);
-            }
-        });
+            getTwitchVideos  task = new getTwitchVideos();
+
+            task.execute(String.format(TWITCHAPIURL, channelMessage, 0));
+        }
+        else {
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.parse(((AzubuVideo)videoArray.get(i)).getVideoUrl()), "video/mp4");
+                    startActivity(intent);
+                }
+            });
+
+            getTwitchVideos  task = new getTwitchVideos();
+
+            task.execute(String.format(AZUBUAPIURL, channelMessage, 0));
+        }
 
 
-        getTwitchVideos  task = new getTwitchVideos();
-        task.execute(String.format(apiURL, message, 0));
         process.show();
     }
 
@@ -153,7 +174,12 @@ public class PastVideoLinks extends Activity {
                 URL url = new URL(urls[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 InputStream content = new BufferedInputStream(urlConnection.getInputStream());//get the stream of jsons
-                videos = TwitchVideoJSONParser.getVideos(content);
+                if (websiteMessage.equals("Twitch.tv")) {
+                    videos = TwitchVideoJSONParser.getVideos(content);
+                }
+                else {
+                    videos = AzubuVideoJSONParser.getVideos(content);
+                }
                 urlConnection.disconnect();
             } catch (Exception e) {
                 e.printStackTrace();

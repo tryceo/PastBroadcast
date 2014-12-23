@@ -50,7 +50,7 @@ public class VideoLinks extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(linksArray.get(i)));
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.parse(linksArray.get(i)), "video/flv");
                 startActivity(intent);
             }
