@@ -11,6 +11,11 @@ public class AzubuVideo extends Video{
         super();
     }
 
+    @Override
+    public void setLength(int a) {
+        super.setLength(a/1000);//Azubu uses milliseconds for some reason...
+    }
+
     public void setVideoUrl(String url){
         videoUrl = url;
     }

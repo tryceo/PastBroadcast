@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -58,7 +57,7 @@ public class Home extends Activity {
     }
 
     public void searchNumber(View view) {
-        Intent intent = new Intent(this, PastVideoLinks.class);
+        Intent intent = new Intent(this, VideoLinks.class);
         EditText editText = (EditText) findViewById(R.id.edit_message);
         Spinner spinner = (Spinner) findViewById(R.id.website_spinner);
         String message = editText.getText().toString();

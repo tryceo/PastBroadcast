@@ -19,14 +19,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PastVideoLinks"
+            android:name=".VideoLinks"
             android:label="@string/title_activity_past_video_links"
             android:parentActivityName =".Home">
         </activity>
         <activity
-            android:name=".VideoLinks"
+            android:name=".ChunkLinks"
             android:label="@string/title_activity_video_links"
-            android:parentActivityName=".PastVideoLinks">
+            android:parentActivityName=".VideoLinks">
         </activity>
 
     </application>
