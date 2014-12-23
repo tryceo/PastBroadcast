@@ -56,7 +56,7 @@ public class VideoLinks extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_past_video_links);
+        setContentView(R.layout.activity_video_links);
 
         Intent intent = getIntent();
         channelMessage = intent.getStringExtra(Home.CHANNEL_NAME);
@@ -70,7 +70,7 @@ public class VideoLinks extends Activity {
         ListView listView = (ListView) findViewById(R.id.videolist);
         listView.setAdapter(adapter);
 
-        if (websiteMessage.equals("Twitch.tv")) {
+        if (websiteMessage!=null && websiteMessage.equals("Twitch.tv")) {//fixes the app crashing when using Up navigation
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -162,7 +162,7 @@ public class VideoLinks extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.past_video_links, menu);
+        getMenuInflater().inflate(R.menu.video_links, menu);
         return true;
     }
 

@@ -20,7 +20,7 @@
         </activity>
         <activity
             android:name=".VideoLinks"
-            android:label="@string/title_activity_past_video_links"
+            android:label="@string/title_activity_chunk_links"
             android:parentActivityName =".Home">
         </activity>
         <activity

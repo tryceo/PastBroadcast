@@ -6,9 +6,8 @@
     <string name="action_settings">Settings</string>
     <string name="edit_message">Type streamer username here</string>
     <string name="button_search">Search</string>
+    <string name="title_activity_chunk_links">ChunkLinks</string>
     <string name="title_activity_video_links">VideoLinks</string>
-    <string name="title_activity_links_view">LinksView</string>
-    <string name="title_activity_past_video_links">PastVideoLinks</string>
     <string name="chunkNumber">Chunk Number</string>
     <string name="chunkTime">Chunk Time</string>
 

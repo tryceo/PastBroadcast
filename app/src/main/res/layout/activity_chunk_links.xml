@@ -6,10 +6,10 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.tryceo.jack.pastbroadcast.VideoLinks">
+    tools:context="com.tryceo.jack.pastbroadcast.ChunkLinks">
 
     <ListView
-        android:id="@+id/videolist"
+        android:id="@+id/chunkList"
         android:text="@string/hello_world"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

@@ -45,7 +45,7 @@ public class ChunkLinks extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_links);
+        setContentView(R.layout.activity_chunk_links);
         Intent intent = getIntent();
         String message = intent.getStringExtra(VideoLinks.ID);
         process = new ProgressDialog(this);
@@ -126,7 +126,7 @@ public class ChunkLinks extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.video_links, menu);
+        getMenuInflater().inflate(R.menu.chunk_links, menu);
         return true;
     }
 
