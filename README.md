@@ -1,11 +1,11 @@
 PastBroadcast
 =============
 
-View past broadcast videos on twitch.tv
+View past broadcast videos on Twitch.tv and Azubu.tv
 
-Enter the username of the streamer you want (e.g. tsm_oddone)
+Enter the username of the streamer you want (e.g. tsm_oddone, Faker) #Case sensitive for Azubu
 
-Requires an video player that supports flv (e.g. MX Player, VLC)
+Requires an video player that supports flv for Twitch(e.g. MX Player, VLC) and mp4 for Azubu
 
 Try it out at https://github.com/tryceo/PastBroadcast/releases
 
