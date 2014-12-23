@@ -33,8 +33,7 @@ public class Video {
     }
 
     public void setRecordedAt(String a) {
-
-        recordedAt = a;
+        recordedAt = (a.replaceAll("T", " ")).replaceAll("Z", "");
     }
 
     public void setLength(int a) {
