@@ -9,6 +9,8 @@
     <string name="title_activity_video_links">VideoLinks</string>
     <string name="title_activity_links_view">LinksView</string>
     <string name="title_activity_past_video_links">PastVideoLinks</string>
+    <string name="chunkNumber">Chunk Number</string>
+    <string name="chunkTime">Chunk Time</string>
 
     <string-array name="website_array">
         <item>Twitch.tv</item>

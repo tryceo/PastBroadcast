@@ -9,8 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Jack on 10/14/2014.
+ * Created by Jack on 10/28/2014.
+ *
+ * Helper class that parses the JSON returned by the Twitch api
+ *
+ * All static methods
  */
+
 public class TwitchVideoJSONParser {
 
     public static List<Chunk> getChunks(InputStream in) throws IOException {
@@ -71,6 +76,7 @@ public class TwitchVideoJSONParser {
     }
 
     public static List<Video> getVideos(InputStream in) throws IOException {
+        //Gets the initial JSON object, and then passes the "videos" part to readVideos;
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         List<Video> videos = new ArrayList<Video>();
         try {
@@ -81,7 +87,6 @@ public class TwitchVideoJSONParser {
                     return readVideos(reader);
                 } else {
                     reader.skipValue();
-
                 }
             }
             reader.endObject();
@@ -92,6 +97,7 @@ public class TwitchVideoJSONParser {
     }
 
     private static List<Video> readVideos(JsonReader reader) throws IOException {
+        //Gets the JSON array "video", and passes each JSON Object to readVideo. Returns a List of Videos
         List<Video> videos = new ArrayList<Video>();
         reader.beginArray();
         while (reader.hasNext()) {
@@ -102,6 +108,7 @@ public class TwitchVideoJSONParser {
     }
 
     private static Video readVideo(JsonReader reader) throws IOException {
+        //Gets the JSON Object video, parses it, and then returns a Video Object
         reader.beginObject();
         Video v = new Video();
         while (reader.hasNext()) {

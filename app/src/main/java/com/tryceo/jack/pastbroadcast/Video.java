@@ -2,6 +2,10 @@ package com.tryceo.jack.pastbroadcast;
 
 /**
  * Created by Jack on 10/15/2014.
+ *
+ * Class for a video object.
+ *
+ * Used for Twitch videos
  */
 public class Video {
 
@@ -19,13 +23,6 @@ public class Video {
         preview = "";
     }
 
-    public Video(String a, String b, String c, int d, String e) {
-        title = a;
-        id = b;
-        recordedAt = c;
-        length = d;
-        preview = e;
-    }
 
     public void setTitle(String a) {
         title = a;

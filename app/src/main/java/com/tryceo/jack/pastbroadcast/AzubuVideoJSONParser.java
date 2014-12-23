@@ -11,10 +11,18 @@ import java.util.List;
 
 /**
  * Created by Jack on 10/28/2014.
+ *
+ * Helper class that parses the JSON returned by the Azubu api
+ *
+ * All static methods
  */
+
+
 public class AzubuVideoJSONParser {
 
+
     public static List<Video> getVideos(InputStream in) throws IOException {
+        //Gets the initial JSON object, and then passes the "data" part to readVideos;
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         List<Video> videos = new ArrayList<Video>();
         try {
@@ -35,6 +43,7 @@ public class AzubuVideoJSONParser {
     }
 
     private static List<Video> readVideos(JsonReader reader) throws IOException {
+        //Gets the JSON array "data", and passes each JSON Object to readVideo. Returns a List of Videos
         List<Video> videos = new ArrayList<Video>();
         reader.beginArray();
         while (reader.hasNext()) {
@@ -45,6 +54,7 @@ public class AzubuVideoJSONParser {
     }
 
     private static Video readVideo(JsonReader reader) throws IOException {
+        //Gets the JSON Object video, parses it, and then returns an AzubuVideo Object
         reader.beginObject();
         Video v = new AzubuVideo();
         while (reader.hasNext()) {
@@ -60,7 +70,8 @@ public class AzubuVideoJSONParser {
             } else if (name.equals("thumbnail")) {
                 v.setPreview(reader.nextString());
             } else if (name.equals("stream_params")) {
-                ((AzubuVideo) v).setVideoUrl(readParams(reader.nextString())); //Casting takes place
+                ((AzubuVideo) v).setVideoUrl(readParams(reader.nextString()));//Polymorphism
+                //For some reason, Azubu encodes the stream_params JSON Object as a string, so need to use readParams
             } else {
                 reader.skipValue();
             }
@@ -71,7 +82,7 @@ public class AzubuVideoJSONParser {
     }
 
     private static String readParams(String params) throws IOException {
-
+        //Decodes the streams_params String, returns the video URL
         JsonReader reader = new JsonReader(new StringReader(params));
 
         try {

@@ -2,7 +2,12 @@ package com.tryceo.jack.pastbroadcast;
 
 /**
  * Created by Jack on 12/22/2014.
+ *
+ * Class for a video object.
+ *
+ * Used for Azubu videos
  */
+
 public class AzubuVideo extends Video{
 
     public String videoUrl;

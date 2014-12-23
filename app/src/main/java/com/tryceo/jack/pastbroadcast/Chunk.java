@@ -1,8 +1,13 @@
 package com.tryceo.jack.pastbroadcast;
 
 /**
- * Created by Jack on 10/14/2014.
+ * Created by Jack on 10/15/2014.
+ * <p/>
+ * Class for a chunk object.
+ * <p/>
+ * Used for Twitch videos because they split their videos into 30 minute flv chunks
  */
+
 public class Chunk {
     public String url = "";
     public int length = 0;
@@ -10,12 +15,6 @@ public class Chunk {
     public Chunk() {
         url = "";
         length = 0;
-    }
-
-
-    public Chunk(String a, int b) {
-        url = a;
-        length = b;
     }
 
     public void setURL(String a) {

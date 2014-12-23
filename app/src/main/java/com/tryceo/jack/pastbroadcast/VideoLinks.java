@@ -28,11 +28,14 @@ import java.util.List;
 
 /**
  * Created by Jack
- *
+ * <p/>
  * This class is the activity that shows the list of past videos found on the channel
+ * <p/>
+ *
+ * Receives intent from Home
  *
  * If Azubu.tv, clicking on an item will start an external activity
- *
+ * <p/>
  * If Twitch.tv, clcking on an item will start ChunkLinks activity
  */
 
@@ -42,7 +45,7 @@ public class VideoLinks extends Activity {
     public ProgressDialog process;
     public static List<Video> videoArray;
     private static final String TWITCHAPIURL = "https://api.twitch.tv/kraken/channels/%s/videos?limit=100&offset=%d&broadcasts=true";
-    private static final String AZUBUAPIURL = "http://www.azubu.tv/api/channel/%s/video/list?offset=0&limit=100&sortBy=date&sortType=desc";
+    private static final String AZUBUAPIURL = "http://www.azubu.tv/api/channel/%s/video/list?offset=%d&limit=100&sortBy=date&sortType=desc";
     //Need to implement infinite scroll/dynamic loading
     public final static String ID = "Video ID";
     public static String channelMessage;
@@ -67,7 +70,7 @@ public class VideoLinks extends Activity {
         ListView listView = (ListView) findViewById(R.id.videolist);
         listView.setAdapter(adapter);
 
-        if (websiteMessage.equals("Twitch.tv")){
+        if (websiteMessage.equals("Twitch.tv")) {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -77,21 +80,20 @@ public class VideoLinks extends Activity {
                 }
             });
 
-            getTwitchVideos  task = new getTwitchVideos();
+            getTwitchVideos task = new getTwitchVideos();
 
             task.execute(String.format(TWITCHAPIURL, channelMessage, 0));
-        }
-        else {
+        } else {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.parse(((AzubuVideo)videoArray.get(i)).getVideoUrl()), "video/mp4");
+                    intent.setDataAndType(Uri.parse(((AzubuVideo) videoArray.get(i)).getVideoUrl()), "video/mp4");
                     startActivity(intent);//Goes to an external app like MX Player
                 }
             });
 
-            getTwitchVideos  task = new getTwitchVideos();
+            getTwitchVideos task = new getTwitchVideos();
 
             task.execute(String.format(AZUBUAPIURL, channelMessage, 0));
         }
@@ -103,7 +105,8 @@ public class VideoLinks extends Activity {
     public class VideoAdapter extends BaseAdapter {
 
         private List<Video> videos;
-        public VideoAdapter (List<Video> videos){
+
+        public VideoAdapter(List<Video> videos) {
             this.videos = videos;
         }
 
@@ -125,7 +128,7 @@ public class VideoLinks extends Activity {
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            if (view == null){
+            if (view == null) {
                 LayoutInflater inflater = VideoLinks.this.getLayoutInflater();
                 view = inflater.inflate(R.layout.video_row, viewGroup, false);
             }
@@ -146,10 +149,9 @@ public class VideoLinks extends Activity {
             int secs = videos.get(i).getLength();
 
             int min = secs / 60;
-            int hour = min /60;
+            int hour = min / 60;
             min %= 60;
             int sec = secs % 60;
-
 
             length.setText(String.format("Length: %d:%02d:%02d", hour, min, sec));
 
@@ -170,10 +172,7 @@ public class VideoLinks extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     private class getTwitchVideos extends AsyncTask<String, Object, List<Video>> {
@@ -186,8 +185,7 @@ public class VideoLinks extends Activity {
                 InputStream content = new BufferedInputStream(urlConnection.getInputStream());//get the stream of jsons
                 if (websiteMessage.equals("Twitch.tv")) {
                     videos = TwitchVideoJSONParser.getVideos(content);
-                }
-                else {
+                } else {
                     videos = AzubuVideoJSONParser.getVideos(content);
                 }
                 urlConnection.disconnect();

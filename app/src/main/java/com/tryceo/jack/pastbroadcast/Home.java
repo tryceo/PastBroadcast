@@ -13,12 +13,18 @@ import android.widget.Spinner;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+/**
+ * Created by Jack on 10/10/2014.
+ *
+ * Homescreen for the app.
+ *
+ * Passes intent to VideoLinks
+ */
 
 public class Home extends Activity {
 
     public final static String CHANNEL_NAME = "Channel Name";
     public final static String STREAMING_WEBSITE = "Streaming Website";
-    public static String website = "Twitch.tv";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +33,14 @@ public class Home extends Activity {
 
         setContentView(R.layout.activity_home);
         Spinner spinner = (Spinner) findViewById(R.id.website_spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.website_array));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.website_array));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spinner.setAdapter(adapter);
+        spinner.setAdapter(adapter);//set the adapter
 
         ImageLoader.getInstance().init(config);
+        //Starts the ImageLoader
 
     }
 
@@ -50,10 +58,7 @@ public class Home extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     public void searchNumber(View view) {
@@ -63,6 +68,7 @@ public class Home extends Activity {
         String message = editText.getText().toString();
         intent.putExtra(CHANNEL_NAME, message);
         intent.putExtra(STREAMING_WEBSITE, spinner.getSelectedItem().toString());
+        //adds the choice between Twitch and Azubu
         startActivity(intent);
     }
 

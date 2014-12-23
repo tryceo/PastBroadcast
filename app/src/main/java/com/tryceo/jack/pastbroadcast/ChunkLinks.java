@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -20,18 +23,26 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by Jack
+ * <p/>
+ * This class shows a list of chunks for a given video on Twitch
+ * <p/>
+ * Receives intent from VideoLinks
+ * <p/>
+ * Passes intent to external app to open flv files
+ */
 
 public class ChunkLinks extends Activity {
 
-    private ArrayAdapter<String> adapter;
+    private BaseAdapter adapter;
     ProgressDialog process;
-    List<String> linksArray;
+    List<Chunk> chunksArray;
     private static final String apiURL = "https://api.twitch.tv/api/videos/%s";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_links);
@@ -41,9 +52,9 @@ public class ChunkLinks extends Activity {
         process.setTitle("Loading...");
         process.setMessage("Please Wait");
 
-        linksArray = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, linksArray);
-        ListView listView = (ListView) findViewById(R.id.listlinks);
+        chunksArray = new ArrayList<Chunk>();
+        adapter = new ChunkAdapter(chunksArray);
+        ListView listView = (ListView) findViewById(R.id.chunkList);
         listView.setAdapter(adapter);
 
         //Adds the onclick function for each object
@@ -51,7 +62,7 @@ public class ChunkLinks extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse(linksArray.get(i)), "video/flv");
+                intent.setDataAndType(Uri.parse(chunksArray.get(i).getURL()), "video/flv");
                 startActivity(intent);
             }
         });
@@ -60,6 +71,55 @@ public class ChunkLinks extends Activity {
         getTwitchLinks task = new getTwitchLinks();
         task.execute(String.format(apiURL, message));
         process.show();
+    }
+
+    public class ChunkAdapter extends BaseAdapter {
+
+        private List<Chunk> chunks;
+
+        public ChunkAdapter(List<Chunk> chunks) {
+            this.chunks = chunks;
+        }
+
+
+        @Override
+        public int getCount() {
+            return chunks.size();
+        }
+
+        @Override
+        public Chunk getItem(int i) {
+            return chunks.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if (view == null) {
+                LayoutInflater inflater = ChunkLinks.this.getLayoutInflater();
+                view = inflater.inflate(R.layout.chunk_row, viewGroup, false);
+            }
+
+            TextView chunkNumber = (TextView) view.findViewById(R.id.chunkNumber);
+            TextView chunkTime = (TextView) view.findViewById(R.id.chunkTime);
+
+            chunkNumber.setText("Chunk #" + (i + 1));
+
+            int secs = chunks.get(i).getLength();
+
+            int min = secs / 60;
+            int hour = min / 60;
+            min %= 60;
+            int sec = secs % 60;
+
+            chunkTime.setText(String.format("Length: %d:%02d:%02d", hour, min, sec));
+
+            return view;
+        }
     }
 
 
@@ -98,21 +158,7 @@ public class ChunkLinks extends Activity {
 
         @Override
         protected void onPostExecute(List<Chunk> result) {
-            adapter.clear();
-            List<String> videos = new ArrayList<String>();
-            List<String> videoLinks = new ArrayList<String>();
-            for (int i = 0; i < result.size(); i++) {
-                int secs = result.get(i).getLength();
-                int min = secs / 60;
-                int hour = min / 60;
-                min %= 60;
-                int sec = secs % 60;
-
-                videos.add(String.format("Video #%d   Length: %d:%02d:%02d", i + 1, hour, min, sec));
-                videoLinks.add(result.get(i).getURL());
-            }
-            linksArray = videoLinks;
-            adapter.addAll(videos);
+            chunksArray.addAll(result);
             adapter.notifyDataSetChanged();
             process.dismiss();
         }
