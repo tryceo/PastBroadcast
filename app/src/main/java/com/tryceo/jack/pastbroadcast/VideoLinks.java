@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -39,17 +40,17 @@ import java.util.List;
  * If Twitch.tv, clcking on an item will start ChunkLinks activity
  */
 
-public class VideoLinks extends Activity {
+public class VideoLinks extends Activity implements AbsListView.OnScrollListener{
 
     private BaseAdapter adapter;
     public ProgressDialog process;
     public static List<Video> videoArray;
-    private static final String TWITCHAPIURL = "https://api.twitch.tv/kraken/channels/%s/videos?limit=100&offset=%d&broadcasts=true";
-    private static final String AZUBUAPIURL = "http://www.azubu.tv/api/channel/%s/video/list?offset=%d&limit=100&sortBy=date&sortType=desc";
-    //Need to implement infinite scroll/dynamic loading
+    private static final String TWITCHAPIURL = "https://api.twitch.tv/kraken/channels/%s/videos?limit=10&offset=%d&broadcasts=true";
+    private static final String AZUBUAPIURL = "http://www.azubu.tv/api/channel/%s/video/list?offset=%d&limit=10&sortBy=date&sortType=desc";
     public final static String ID = "Video ID";
     public static String channelMessage;
     public static String websiteMessage;
+    public boolean sentRequest;
 
 
     @Override
@@ -70,6 +71,7 @@ public class VideoLinks extends Activity {
         ListView listView = (ListView) findViewById(R.id.videolist);
         listView.setAdapter(adapter);
 
+        listView.setOnScrollListener(this);
         if (websiteMessage!=null && websiteMessage.equals("Twitch.tv")) {//fixes the app crashing when using Up navigation
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -99,6 +101,31 @@ public class VideoLinks extends Activity {
         }
 
         process.show();
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView absListView, int i) {
+        if (i == SCROLL_STATE_IDLE ) {
+            if (absListView.getLastVisiblePosition() >= absListView.getCount() - 2) {
+
+                getTwitchVideos task = new getTwitchVideos();
+
+                if (!sentRequest){//Checks to see a getTwitchVideos task is already running
+                    if (websiteMessage!=null && websiteMessage.equals("Twitch.tv")) {//fixes the app crashing when using Up navigation
+
+                        task.execute(String.format(TWITCHAPIURL, channelMessage, videoArray.size()));
+                    } else {
+
+                        task.execute(String.format(AZUBUAPIURL, channelMessage, videoArray.size()));
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView absListView, int i, int i2, int i3) {
+        //Do nothing
     }
 
 
@@ -179,6 +206,7 @@ public class VideoLinks extends Activity {
         @Override
         protected List<Video> doInBackground(String... urls) {
             List<Video> videos = new ArrayList<Video>();
+            sentRequest = true;
             try {
                 URL url = new URL(urls[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -200,6 +228,7 @@ public class VideoLinks extends Activity {
             videoArray.addAll(result);
 
             adapter.notifyDataSetChanged();
+            sentRequest=false;
             process.dismiss();
         }
     }
