@@ -10,7 +10,7 @@ package com.tryceo.jack.pastbroadcast;
 
 public class AzubuVideo extends Video{
 
-    public String videoUrl;
+    private String videoUrl;
 
     public AzubuVideo() {
         super();

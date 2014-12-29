@@ -9,8 +9,8 @@ package com.tryceo.jack.pastbroadcast;
  */
 
 public class Chunk {
-    public String url = "";
-    public int length = 0;
+    private String url = "";
+    private int length = 0;
 
     public Chunk() {
         url = "";

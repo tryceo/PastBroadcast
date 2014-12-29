@@ -9,11 +9,11 @@ package com.tryceo.jack.pastbroadcast;
  */
 public class Video {
 
-    public String title;
-    public String id;
-    public String recordedAt;
-    public int length;
-    public String preview;
+    private String title;
+    private String id;
+    private String recordedAt;
+    private int length;
+    private String preview;
 
     public Video() {
         title = "";
