@@ -16,6 +16,9 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.tryceo.jack.pastbroadcast.Helpers.TwitchVideoJSONParser;
+import com.tryceo.jack.pastbroadcast.Objects.Chunk;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -36,8 +39,8 @@ import java.util.List;
 public class ChunkLinks extends Activity {
 
     private BaseAdapter adapter;
-    ProgressDialog process;
-    List<Chunk> chunksArray;
+    private ProgressDialog process;
+    private List<Chunk> chunksArray;
     private static final String apiURL = "https://api.twitch.tv/api/videos/%s";
 
 

@@ -19,6 +19,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.tryceo.jack.pastbroadcast.Helpers.AzubuVideoJSONParser;
+import com.tryceo.jack.pastbroadcast.Helpers.TwitchVideoJSONParser;
+import com.tryceo.jack.pastbroadcast.Objects.AzubuVideo;
+import com.tryceo.jack.pastbroadcast.Objects.Video;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -43,14 +47,14 @@ import java.util.List;
 public class VideoLinks extends Activity implements AbsListView.OnScrollListener{
 
     private BaseAdapter adapter;
-    public ProgressDialog process;
-    public static List<Video> videoArray;
+    private ProgressDialog process;
+    private static List<Video> videoArray;
     private static final String TWITCHAPIURL = "https://api.twitch.tv/kraken/channels/%s/videos?limit=10&offset=%d&broadcasts=true";
     private static final String AZUBUAPIURL = "http://www.azubu.tv/api/channel/%s/video/list?offset=%d&limit=10&sortBy=date&sortType=desc";
     public final static String ID = "Video ID";
-    public static String channelMessage;
-    public static String websiteMessage;
-    public boolean sentRequest;
+    private static String channelMessage;
+    private static String websiteMessage;
+    private boolean sentRequest;
 
 
     @Override
