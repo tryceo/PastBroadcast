@@ -4,6 +4,8 @@
     <string name="app_name">PastBroadcast</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_search">Search Channel Name</string>
+    <string name="action_spinner">Streaming Platform</string>
     <string name="edit_message">Type streamer username here</string>
     <string name="button_search">Search</string>
     <string name="title_activity_chunk_links">ChunkLinks</string>
@@ -15,4 +17,7 @@
         <item>Twitch.tv</item>
         <item>Azubu.tv</item>
     </string-array>
+
+    <string name="title_activity_azubu_video_list">AzubuVideoList</string>
+
 </resources>

@@ -1,7 +1,8 @@
-package com.tryceo.jack.pastbroadcast;
+package com.tryceo.jack.pastbroadcast.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,7 +19,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.imageaware.ImageAware;
+import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
+import com.tryceo.jack.pastbroadcast.R;
+import com.tryceo.jack.pastbroadcast.helpers.AzubuVideoJSONParser;
+import com.tryceo.jack.pastbroadcast.helpers.TwitchVideoJSONParser;
+import com.tryceo.jack.pastbroadcast.objects.Video;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -37,16 +45,16 @@ import java.util.List;
  *
  * If Azubu.tv, clicking on an item will start an external activity
  * <p/>
- * If Twitch.tv, clcking on an item will start ChunkLinks activity
+ * If Twitch.tv, clcking on an item will start TwitchChunkList activity
  */
 
-public class VideoLinks extends Activity implements AbsListView.OnScrollListener{
+public class TwitchVideoList extends Activity implements AbsListView.OnScrollListener{
 
     private BaseAdapter adapter;
     public ProgressDialog process;
     public static List<Video> videoArray;
-    private static final String TWITCHAPIURL = "https://api.twitch.tv/kraken/channels/%s/videos?limit=10&offset=%d&broadcasts=true";
-    private static final String AZUBUAPIURL = "http://www.azubu.tv/api/channel/%s/video/list?offset=%d&limit=10&sortBy=date&sortType=desc";
+    private static final String TWITCH_API_URL = "https://api.twitch.tv/kraken/channels/%s/videos?limit=10&offset=%d&broadcasts=true";
+    private static final String AZUBU_API_URL = "http://www.azubu.tv/api/channel/%s/video/list?offset=%d&limit=10&sortBy=date&sortType=desc";
     public final static String ID = "Video ID";
     public static String channelMessage;
     public static String websiteMessage;
@@ -62,6 +70,7 @@ public class VideoLinks extends Activity implements AbsListView.OnScrollListener
         Intent intent = getIntent();
         channelMessage = intent.getStringExtra(Home.CHANNEL_NAME);
         websiteMessage = intent.getStringExtra(Home.STREAMING_WEBSITE);
+
         process = new ProgressDialog(this);
         process.setTitle("Loading...");
         process.setMessage("Please Wait");
@@ -76,28 +85,28 @@ public class VideoLinks extends Activity implements AbsListView.OnScrollListener
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Intent intent = new Intent(VideoLinks.this, ChunkLinks.class);
-                    intent.putExtra(VideoLinks.ID, videoArray.get(i).getId());
-                    startActivity(intent);//Goes to ChunkLinks
+                    Intent intent = new Intent(TwitchVideoList.this, TwitchChunkList.class);
+                    intent.putExtra(TwitchVideoList.ID, videoArray.get(i).getId());
+                    startActivity(intent);//Goes to TwitchChunkList
                 }
             });
 
             getTwitchVideos task = new getTwitchVideos();
 
-            task.execute(String.format(TWITCHAPIURL, channelMessage, 0));
+            task.execute(String.format(TWITCH_API_URL, channelMessage, 0));
         } else {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.parse(((AzubuVideo) videoArray.get(i)).getVideoUrl()), "video/mp4");
+                    intent.setDataAndType(Uri.parse(videoArray.get(i).getVideoUrl()), "video/mp4");
                     startActivity(intent);//Goes to an external app like MX Player
                 }
             });
 
             getTwitchVideos task = new getTwitchVideos();
 
-            task.execute(String.format(AZUBUAPIURL, channelMessage, 0));
+            task.execute(String.format(AZUBU_API_URL, channelMessage, 0));
         }
 
         process.show();
@@ -113,10 +122,10 @@ public class VideoLinks extends Activity implements AbsListView.OnScrollListener
                 if (!sentRequest){//Checks to see a getTwitchVideos task is already running
                     if (websiteMessage!=null && websiteMessage.equals("Twitch.tv")) {//fixes the app crashing when using Up navigation
 
-                        task.execute(String.format(TWITCHAPIURL, channelMessage, videoArray.size()));
+                        task.execute(String.format(TWITCH_API_URL, channelMessage, videoArray.size()));
                     } else {
 
-                        task.execute(String.format(AZUBUAPIURL, channelMessage, videoArray.size()));
+                        task.execute(String.format(AZUBU_API_URL, channelMessage, videoArray.size()));
                     }
                 }
             }
@@ -130,6 +139,11 @@ public class VideoLinks extends Activity implements AbsListView.OnScrollListener
 
 
     public class VideoAdapter extends BaseAdapter {
+
+        private DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
 
         private List<Video> videos;
 
@@ -156,7 +170,7 @@ public class VideoLinks extends Activity implements AbsListView.OnScrollListener
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             if (view == null) {
-                LayoutInflater inflater = VideoLinks.this.getLayoutInflater();
+                LayoutInflater inflater = TwitchVideoList.this.getLayoutInflater();
                 view = inflater.inflate(R.layout.video_row, viewGroup, false);
             }
 
@@ -165,9 +179,13 @@ public class VideoLinks extends Activity implements AbsListView.OnScrollListener
             TextView length = (TextView) view.findViewById(R.id.length);
             ImageView preview = (ImageView) view.findViewById(R.id.previewImage);
 
-            ImageLoader imageLoader = ImageLoader.getInstance();
+            if (preview == null || !videos.get(i).getPreview().equals(preview.getTag())) {
+                ImageLoader imageLoader = ImageLoader.getInstance();
+                ImageAware imageAware = new ImageViewAware(preview, false);
 
-            imageLoader.displayImage(videos.get(i).getPreview(), preview);
+                imageLoader.displayImage(videos.get(i).getPreview(), imageAware, options);
+                preview.setTag(videos.get(i).getPreview());
+            }
 
             title.setText(videos.get(i).getTitle());
 
@@ -212,6 +230,7 @@ public class VideoLinks extends Activity implements AbsListView.OnScrollListener
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 InputStream content = new BufferedInputStream(urlConnection.getInputStream());//get the stream of jsons
                 if (websiteMessage.equals("Twitch.tv")) {
+
                     videos = TwitchVideoJSONParser.getVideos(content);
                 } else {
                     videos = AzubuVideoJSONParser.getVideos(content);
@@ -232,6 +251,4 @@ public class VideoLinks extends Activity implements AbsListView.OnScrollListener
             process.dismiss();
         }
     }
-
-
 }

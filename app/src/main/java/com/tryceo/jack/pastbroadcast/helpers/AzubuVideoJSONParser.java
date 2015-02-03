@@ -1,6 +1,9 @@
-package com.tryceo.jack.pastbroadcast;
+package com.tryceo.jack.pastbroadcast.helpers;
 
 import android.util.JsonReader;
+
+import com.tryceo.jack.pastbroadcast.objects.AzubuVideo;
+import com.tryceo.jack.pastbroadcast.objects.Video;
 
 import java.io.IOException;
 import java.io.InputStream;

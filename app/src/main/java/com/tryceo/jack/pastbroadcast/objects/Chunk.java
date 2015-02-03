@@ -1,4 +1,4 @@
-package com.tryceo.jack.pastbroadcast;
+package com.tryceo.jack.pastbroadcast.objects;
 
 /**
  * Created by Jack on 10/15/2014.

@@ -1,4 +1,4 @@
-package com.tryceo.jack.pastbroadcast;
+package com.tryceo.jack.pastbroadcast.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -16,6 +16,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.tryceo.jack.pastbroadcast.R;
+import com.tryceo.jack.pastbroadcast.helpers.TwitchVideoJSONParser;
+import com.tryceo.jack.pastbroadcast.objects.Chunk;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -28,12 +32,12 @@ import java.util.List;
  * <p/>
  * This class shows a list of chunks for a given video on Twitch
  * <p/>
- * Receives intent from VideoLinks
+ * Receives intent from TwitchVideoList
  * <p/>
  * Passes intent to external app to open flv files
  */
 
-public class ChunkLinks extends Activity {
+public class TwitchChunkList extends Activity {
 
     private BaseAdapter adapter;
     ProgressDialog process;
@@ -47,7 +51,7 @@ public class ChunkLinks extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chunk_links);
         Intent intent = getIntent();
-        String message = intent.getStringExtra(VideoLinks.ID);
+        String message = intent.getStringExtra(TwitchVideoList.ID);
         process = new ProgressDialog(this);
         process.setTitle("Loading...");
         process.setMessage("Please Wait");
@@ -100,7 +104,7 @@ public class ChunkLinks extends Activity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             if (view == null) {
-                LayoutInflater inflater = ChunkLinks.this.getLayoutInflater();
+                LayoutInflater inflater = TwitchChunkList.this.getLayoutInflater();
                 view = inflater.inflate(R.layout.chunk_row, viewGroup, false);
             }
 

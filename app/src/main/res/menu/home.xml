@@ -1,8 +1,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".Home" >
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto"
+    tools:context=".Home">
+
+
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
+
+    <item android:id="@+id/action_menu_spinner"
+        android:title="@string/action_spinner"
+        android:showAsAction="always"
+        android:actionLayout="@layout/home_menu_spinner"
+
+    />
+
+    <item android:id="@+id/action_search"
+        android:title="@string/action_search"
+        android:icon="@drawable/ic_action_search"
+        android:showAsAction="ifRoom|collapseActionView"
+        android:actionViewClass="android.widget.SearchView"
+        android:hint="@string/action_search"
+        />
+
 </menu>

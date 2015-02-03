@@ -1,4 +1,4 @@
-package com.tryceo.jack.pastbroadcast;
+package com.tryceo.jack.pastbroadcast.objects;
 
 /**
  * Created by Jack on 10/15/2014.
@@ -14,6 +14,7 @@ public class Video {
     private String recordedAt;
     private int length;
     private String preview;
+    private String videoUrl;
 
     public Video() {
         title = "";
@@ -33,7 +34,7 @@ public class Video {
     }
 
     public void setRecordedAt(String a) {
-        recordedAt = (a.replaceAll("T", " ")).replaceAll("Z", "");
+        recordedAt = a;
     }
 
     public void setLength(int a) {
@@ -62,5 +63,13 @@ public class Video {
 
     public String getPreview() {
         return preview;
+    }
+
+    public void setVideoUrl(String url){
+        videoUrl = url;
+    }
+
+    public String getVideoUrl(){
+        return videoUrl;
     }
 }

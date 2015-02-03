@@ -1,6 +1,10 @@
-package com.tryceo.jack.pastbroadcast;
+package com.tryceo.jack.pastbroadcast.helpers;
 
 import android.util.JsonReader;
+
+import com.tryceo.jack.pastbroadcast.objects.Chunk;
+import com.tryceo.jack.pastbroadcast.objects.TwitchVideo;
+import com.tryceo.jack.pastbroadcast.objects.Video;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,6 +79,27 @@ public class TwitchVideoJSONParser {
         return chunk;
     }
 
+    public static String checkError(InputStream in) throws IOException{
+        JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+
+        String errorMessage = "";
+        try{
+            reader.beginObject();
+            while (reader.hasNext()){
+                String name = reader.nextName();
+                if (name.equals("message")){
+                    errorMessage = reader.nextString();
+                }
+            }
+            reader.endObject();
+        } finally {
+            reader.close();
+        }
+
+        return errorMessage;
+    }
+
+
     public static List<Video> getVideos(InputStream in) throws IOException {
         //Gets the initial JSON object, and then passes the "videos" part to readVideos;
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
@@ -84,7 +109,7 @@ public class TwitchVideoJSONParser {
             while (reader.hasNext()) {
                 String name = reader.nextName();
                 if (name.equals("videos")) {
-                    return readVideos(reader);
+                    videos= readVideos(reader);
                 } else {
                     reader.skipValue();
                 }
@@ -110,7 +135,7 @@ public class TwitchVideoJSONParser {
     private static Video readVideo(JsonReader reader) throws IOException {
         //Gets the JSON Object video, parses it, and then returns a Video Object
         reader.beginObject();
-        Video v = new Video();
+        Video v = new TwitchVideo();
         while (reader.hasNext()) {
             String name = reader.nextName();
             if (name.equals("title")) {

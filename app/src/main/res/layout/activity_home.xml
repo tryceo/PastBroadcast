@@ -32,6 +32,4 @@
         android:onClick="searchNumber"/>
 
 
-
-
 </RelativeLayout>

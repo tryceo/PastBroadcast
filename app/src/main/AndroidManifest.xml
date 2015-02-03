@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tryceo.jack.pastbroadcast">
+    package="com.tryceo.jack.pastbroadcast" >
 
     <uses-permission android:name="android.permission.INTERNET" />
-
 
     <application
         android:allowBackup="true"
@@ -11,24 +10,36 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Home"
+            android:name=".activities.Home"
             android:label="@string/app_name" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"
+                 />
+
+
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".activities.TwitchVideoList"
+            android:label="@string/title_activity_video_links"
+            android:parentActivityName=".activities.Home"
+            >
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
         </activity>
         <activity
-            android:name=".VideoLinks"
-            android:label="@string/title_activity_video_links"
-            android:parentActivityName =".Home">
+            android:name=".activities.TwitchChunkList"
+            android:label="@string/title_activity_chunk_links"
+            android:parentActivityName=".activities.TwitchVideoList" >
         </activity>
         <activity
-            android:name=".ChunkLinks"
-            android:label="@string/title_activity_chunk_links"
-            android:parentActivityName=".VideoLinks">
+            android:name=".activities.AzubuVideoList"
+            android:label="@string/title_activity_azubu_video_list" >
         </activity>
-
     </application>
 
 </manifest>
