@@ -9,12 +9,6 @@
         android:orderInCategory="100"
         android:showAsAction="never" />
 
-    <item android:id="@+id/action_menu_spinner"
-        android:title="@string/action_spinner"
-        android:showAsAction="always"
-        android:actionLayout="@layout/home_menu_spinner"
-
-    />
 
     <item android:id="@+id/action_search"
         android:title="@string/action_search"
@@ -22,6 +16,12 @@
         android:showAsAction="ifRoom|collapseActionView"
         android:actionViewClass="android.widget.SearchView"
         android:hint="@string/action_search"
+        />
+
+    <item android:id="@+id/action_menu_spinner"
+        android:title="@string/action_spinner"
+        android:showAsAction="always"
+        android:actionLayout="@layout/home_menu_spinner"
         />
 
 </menu>

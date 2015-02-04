@@ -51,36 +51,25 @@ public class Home extends Activity {
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint("Channel Name");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                searchChannel(s);
+                return true;
+            }
 
-
-//        if (actionView!= null){
-//            final EditText searchMessage= (EditText) actionView.findViewById(R.id.edit_search_message);
-//            if (searchMessage != null){
-//                searchMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//                    @Override
-//                    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-//                        if (i == EditorInfo.IME_ACTION_SEARCH){
-//                            searchChannel(searchMessage.getText().toString());
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//            }
-//
-//        }
-//        Spinner spinner = (Spinner) findViewById(R.id.website_spinner);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
-//        getResources().getStringArray(R.array.website_array));
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinner.setAdapter(adapter);//set the adapter
-
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
         return true;
     }
 
@@ -96,8 +85,10 @@ public class Home extends Activity {
 
     public void searchChannel(String channel) {
         Intent intent = new Intent(this, TwitchVideoList.class);
+
+        Spinner spinner = (Spinner) findViewById(R.id.website_spinner);
         intent.putExtra(CHANNEL_NAME, channel);
-        intent.putExtra(STREAMING_WEBSITE, "Twitch.tv");
+        intent.putExtra(STREAMING_WEBSITE, spinner.getSelectedItem().toString());
         startActivity(intent);
     }
 
