@@ -1,11 +1,22 @@
 package com.tryceo.jack.pastbroadcast.activities;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tryceo.jack.pastbroadcast.R;
+import com.tryceo.jack.pastbroadcast.helpers.AzubuVideoJSONParser;
+import com.tryceo.jack.pastbroadcast.helpers.TwitchVideoJSONParser;
+import com.tryceo.jack.pastbroadcast.objects.Video;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AzubuVideoList extends Activity {
 
@@ -37,4 +48,31 @@ public class AzubuVideoList extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+//    private class getTwitchVideos extends AsyncTask<String, Object, List<Video>> {
+//        @Override
+//        protected List<Video> doInBackground(String... urls) {
+//            List<Video> videos = new ArrayList<Video>();
+//            sentRequest = true;
+//            try {
+//                URL url = new URL(urls[0]);
+//                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//                InputStream content = new BufferedInputStream(urlConnection.getInputStream());//get the stream of jsons
+//                videos = AzubuVideoJSONParser.getVideos();
+//
+//                urlConnection.disconnect();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return videos;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(List<Video> result) {
+//            videoArray.addAll(result);
+//
+//            adapter.notifyDataSetChanged();
+//            sentRequest=false;
+//            process.dismiss();
+//        }
+//    }
 }

@@ -169,6 +169,7 @@ public class TwitchVideoList extends Activity implements AbsListView.OnScrollLis
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
+
             if (view == null) {
                 LayoutInflater inflater = TwitchVideoList.this.getLayoutInflater();
                 view = inflater.inflate(R.layout.video_row, viewGroup, false);
@@ -179,13 +180,9 @@ public class TwitchVideoList extends Activity implements AbsListView.OnScrollLis
             TextView length = (TextView) view.findViewById(R.id.length);
             ImageView preview = (ImageView) view.findViewById(R.id.previewImage);
 
-            if (preview == null || !videos.get(i).getPreview().equals(preview.getTag())) {
-                ImageLoader imageLoader = ImageLoader.getInstance();
-                ImageAware imageAware = new ImageViewAware(preview, false);
-
-                imageLoader.displayImage(videos.get(i).getPreview(), imageAware, options);
-                preview.setTag(videos.get(i).getPreview());
-            }
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            ImageAware imageAware = new ImageViewAware(preview, false);
+            imageLoader.displayImage(videos.get(i).getPreview(), imageAware, options);
 
             title.setText(videos.get(i).getTitle());
 

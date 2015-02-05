@@ -7,7 +7,7 @@ package com.tryceo.jack.pastbroadcast.objects;
  *
  * Used for Twitch videos
  */
-public class Video {
+public abstract class Video {
 
     private String title;
     private String id;

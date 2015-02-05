@@ -28,6 +28,7 @@ public class AzubuVideoJSONParser {
         //Gets the initial JSON object, and then passes the "data" part to readVideos;
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         List<Video> videos = new ArrayList<Video>();
+
         try {
             reader.beginObject();
             while (reader.hasNext()) {
