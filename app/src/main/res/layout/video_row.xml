@@ -19,6 +19,7 @@
         android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/previewImage"
         android:text="Title"
+        android:maxLines="3"
         android:textAppearance="?android:attr/textAppearanceSmall"
         />
 

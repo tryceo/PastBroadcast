@@ -13,13 +13,13 @@ public class AzubuChannelParser {
     public static String getChannelLogo(InputStream in) throws IOException {
         //Gets the initial JSON object, and then passes the "data" part to readVideos;
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
-        String url = "";
+
         try {
             reader.beginObject();
-            while (reader.hasNext() && url.length()== 0) {
+            while (reader.hasNext()) {
                 String name = reader.nextName();
                 if (name.equals("data")) {
-                    url = getChannelLogoURL(reader);
+                    return getChannelLogoURL(reader);
                 } else {
                     reader.skipValue();
                 }
@@ -28,24 +28,23 @@ public class AzubuChannelParser {
         } finally {
             reader.close();
         }
-        return url;
+        return "";
     }
 
     private static String getChannelLogoURL(JsonReader reader) throws IOException {
 
             reader.beginObject();
 
-            String result = "404";
-            while (reader.hasNext() && !result.equals("404")) {
+            while (reader.hasNext()) {
                 String name = reader.nextName();
                 if (name.equals("url_thumbnail")) {
-                    result = reader.nextString();
+                    return reader.nextString();
                 } else {
                     reader.skipValue();
                 }
             }
             reader.endObject();
 
-            return result;
+            return "404";
     }
 }
