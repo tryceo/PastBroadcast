@@ -1,13 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:yourapp="http://schemas.android.com/apk/res-auto"
     tools:context=".Home">
 
 
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
+    <!--<item android:id="@+id/action_settings"-->
+        <!--android:title="@string/action_settings"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:showAsAction="never" />-->
+
+
 
 
     <item android:id="@+id/action_search"
@@ -22,6 +23,12 @@
         android:title="@string/action_spinner"
         android:showAsAction="always"
         android:actionLayout="@layout/home_menu_spinner"
+        />
+
+    <item android:id="@+id/action_refresh"
+        android:title="@string/action_refresh"
+        android:icon ="@drawable/ic_action_refresh"
+        android:showAsAction="always"
         />
 
 </menu>

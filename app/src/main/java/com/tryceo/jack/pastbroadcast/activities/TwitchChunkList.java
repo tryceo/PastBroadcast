@@ -1,5 +1,6 @@
 package com.tryceo.jack.pastbroadcast.activities;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -52,6 +53,11 @@ public class TwitchChunkList extends Activity {
         setContentView(R.layout.activity_chunk_links);
         Intent intent = getIntent();
         String message = intent.getStringExtra(TwitchVideoList.ID);
+
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null)//Just in case, should not happen, though
+            actionBar.setDisplayHomeAsUpEnabled(false);
+
         process = new ProgressDialog(this);
         process.setTitle("Loading...");
         process.setMessage("Please Wait");

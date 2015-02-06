@@ -12,10 +12,11 @@
     <string name="title_activity_video_links">Videos</string>
     <string name="chunkNumber">Chunk Number</string>
     <string name="chunkTime">Chunk Time</string>
+    <string name="action_refresh">Refresh</string>
 
     <string-array name="website_array">
-        <item>Twitch.tv</item>
-        <item>Azubu.tv</item>
+        <item>Twitch</item>
+        <item>Azubu</item>
     </string-array>
 
     <string name="title_activity_azubu_video_list">AzubuVideoList</string>

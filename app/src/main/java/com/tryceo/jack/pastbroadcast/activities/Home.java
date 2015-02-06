@@ -2,52 +2,42 @@ package com.tryceo.jack.pastbroadcast.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.ViewScaleType;
 import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.tryceo.jack.pastbroadcast.R;
-import com.tryceo.jack.pastbroadcast.activities.TwitchVideoList;
 import com.tryceo.jack.pastbroadcast.helpers.AzubuChannelParser;
-import com.tryceo.jack.pastbroadcast.helpers.AzubuVideoJSONParser;
 import com.tryceo.jack.pastbroadcast.helpers.TwitchChannelParser;
-import com.tryceo.jack.pastbroadcast.helpers.TwitchVideoJSONParser;
 import com.tryceo.jack.pastbroadcast.objects.Channel;
 import com.tryceo.jack.pastbroadcast.objects.StreamingPlatform;
-import com.tryceo.jack.pastbroadcast.objects.Video;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Jack on 10/10/2014.
@@ -74,30 +64,38 @@ public class Home extends Activity {
         .build();
 
         channels = new ArrayList<Channel>();
-        channels.add(new Channel("nl_kripp", StreamingPlatform.TWITCH));
-        channels.add(new Channel("riotgames", StreamingPlatform.TWITCH));
+        SharedPreferences channelData = getPreferences(0);
+        Map<String, ?> dataMap = channelData.getAll();
+        for (Map.Entry<String, ?> entry: dataMap.entrySet()){
+            boolean twitch = (Boolean) entry.getValue();
+            if (twitch){
+                channels.add(new Channel(entry.getKey(), StreamingPlatform.TWITCH));
+            }else{
+                channels.add(new Channel(entry.getKey(), StreamingPlatform.AZUBU));
+            }
+        }
 
-        channels.add(new Channel("summit1G", StreamingPlatform.TWITCH));
-        channels.add(new Channel("TrumpSC", StreamingPlatform.TWITCH));
-        channels.add(new Channel("tsm_theoddone", StreamingPlatform.TWITCH));
-        channels.add(new Channel("sodapoppin", StreamingPlatform.TWITCH));
-        channels.add(new Channel("brttrexpeita", StreamingPlatform.TWITCH));
-        channels.add(new Channel("iijeriichoii", StreamingPlatform.TWITCH));
-        channels.add(new Channel("Faker", StreamingPlatform.AZUBU));
-
-
+        Collections.sort(channels);
+//        channels.add(new Channel("nl_kripp", StreamingPlatform.TWITCH));
+//        channels.add(new Channel("riotgames", StreamingPlatform.TWITCH));
+//        channels.add(new Channel("summit1G", StreamingPlatform.TWITCH));
+//        channels.add(new Channel("TrumpSC", StreamingPlatform.TWITCH));
+//        channels.add(new Channel("tsm_theoddone", StreamingPlatform.TWITCH));
+//        channels.add(new Channel("sodapoppin", StreamingPlatform.TWITCH));
+//        channels.add(new Channel("brttrexpeita", StreamingPlatform.TWITCH));
+//        channels.add(new Channel("iijeriichoii", StreamingPlatform.TWITCH));
+//        channels.add(new Channel("Faker", StreamingPlatform.AZUBU));
 
         setContentView(R.layout.activity_home);
         final GridView channelGrid = (GridView) findViewById(R.id.channelGrid);
         adapter = new ChannelAdapter(channels);
         channelGrid.setAdapter(adapter);
 
-        final Context s = this;
+
         channelGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 searchChannel(channels.get(i));
-
             }
         });
 
@@ -105,6 +103,7 @@ public class Home extends Activity {
 
         task.execute();
         progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
         progressDialog.setMessage("Please Wait");
         progressDialog.show();
         ImageLoader.getInstance().init(config);
@@ -116,14 +115,24 @@ public class Home extends Activity {
         getMenuInflater().inflate(R.menu.home, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
 
+        MenuItem actionRefresh = menu.findItem(R.id.action_refresh);
+        actionRefresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                recreate();
+                return true;
+            }
+        });
+
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint("Channel Name");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                s=s.replaceAll("^[ \\t]+|[ \\t]+$", "");
                 Spinner spinner = (Spinner) findViewById(R.id.website_spinner);
                 StreamingPlatform platform;
-                if (spinner.getSelectedItem().toString().equals("Twitch.tv")){
+                if (spinner.getSelectedItem().toString().equals("Twitch")){
                     platform = StreamingPlatform.TWITCH;
                 }else {
                     platform = StreamingPlatform.AZUBU;
@@ -257,17 +266,25 @@ public class Home extends Activity {
     }
 
     public void searchChannel(Channel channel) {
-        Intent intent = new Intent(this, TwitchVideoList.class);
-        intent.putExtra(CHANNEL_NAME, channel.getChannelName());
+        Intent intent;
+
+        SharedPreferences channelData = getPreferences(0);
+        SharedPreferences.Editor editor = channelData.edit();
+
         if (channel.getChannelPlatform() == StreamingPlatform.TWITCH){
-            intent.putExtra(STREAMING_WEBSITE, "Twitch.tv");
+            intent = new Intent(this, TwitchVideoList.class);
+            editor.putBoolean(channel.getChannelName(), true);
         }
         else {
-            intent.putExtra(STREAMING_WEBSITE, "Azubu.tv");
+            intent = new Intent(this, AzubuVideoList.class);
+            editor.putBoolean(channel.getChannelName(), false);
         }
 
+        intent.putExtra(CHANNEL_NAME, channel.getChannelName());
+        editor.apply();
         startActivity(intent);
     }
+
 
 //    public void addNumber(View view) {
 //        Intent intent = new Intent(this, TwitchVideoList.class);

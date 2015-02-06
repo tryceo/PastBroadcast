@@ -1,9 +1,13 @@
 package com.tryceo.jack.pastbroadcast.objects;
 
+
+
 /**
  * Created by Jack on 2/5/2015.
+ *
+ * Stores information for a Channel Object, like the Name and the URL of the logo
  */
-public class Channel {
+public class Channel implements Comparable<Channel>{
 
     private String channelName;
     private String channelLogo;
@@ -15,14 +19,12 @@ public class Channel {
     private StreamingPlatform channelPlatform;
 
 
-    public Channel(){
-        this.channelName = "";
-    }
     public Channel (String channelName, StreamingPlatform channelPlatform){
         this.channelName = channelName;
         this.channelPlatform = channelPlatform;
 
     }
+
 
     public String getChannelName(){
         return this.channelName;
@@ -32,11 +34,18 @@ public class Channel {
         return this.channelLogo;
     }
 
-    public void setChannelName(String channelName){
-        this.channelName = channelName;
-    }
-
     public void setChannelLogo(String channelLogo){
         this.channelLogo = channelLogo;
+    }
+
+    @Override
+
+    public int compareTo(Channel channel) {
+        if (channel == null){
+            throw new NullPointerException("channel object is null");
+        }
+        else
+            return this.channelName.compareTo(channel.getChannelName());
+
     }
 }

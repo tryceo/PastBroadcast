@@ -2,9 +2,7 @@ package com.tryceo.jack.pastbroadcast.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.app.SearchManager;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,7 +22,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.tryceo.jack.pastbroadcast.R;
-import com.tryceo.jack.pastbroadcast.helpers.AzubuVideoJSONParser;
 import com.tryceo.jack.pastbroadcast.helpers.TwitchVideoJSONParser;
 import com.tryceo.jack.pastbroadcast.objects.Video;
 
@@ -40,26 +37,24 @@ import java.util.List;
  * <p/>
  * This class is the activity that shows the list of past videos found on the channel
  * <p/>
- *
+ * <p/>
  * Receives intent from Home
- *
+ * <p/>
  * If Azubu.tv, clicking on an item will start an external activity
  * <p/>
  * If Twitch.tv, clcking on an item will start TwitchChunkList activity
  */
 
-public class TwitchVideoList extends Activity implements AbsListView.OnScrollListener{
+public class TwitchVideoList extends Activity implements AbsListView.OnScrollListener {
 
     private BaseAdapter adapter;
     public ProgressDialog process;
     public static List<Video> videoArray;
     private static final String TWITCH_API_URL = "https://api.twitch.tv/kraken/channels/%s/videos?limit=10&offset=%d&broadcasts=true";
-    private static final String AZUBU_API_URL = "http://www.azubu.tv/api/channel/%s/video/list?offset=%d&limit=10&sortBy=date&sortType=desc";
     public final static String ID = "Video ID";
     public static String channelMessage;
     public static String websiteMessage;
     public boolean sentRequest;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,52 +76,32 @@ public class TwitchVideoList extends Activity implements AbsListView.OnScrollLis
         listView.setAdapter(adapter);
 
         listView.setOnScrollListener(this);
-        if (websiteMessage!=null && websiteMessage.equals("Twitch.tv")) {//fixes the app crashing when using Up navigation
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Intent intent = new Intent(TwitchVideoList.this, TwitchChunkList.class);
-                    intent.putExtra(TwitchVideoList.ID, videoArray.get(i).getId());
-                    startActivity(intent);//Goes to TwitchChunkList
-                }
-            });
 
-            getTwitchVideos task = new getTwitchVideos();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(TwitchVideoList.this, TwitchChunkList.class);
+                intent.putExtra(TwitchVideoList.ID, videoArray.get(i).getId());
+                startActivity(intent);//Goes to TwitchChunkList
+            }
+        });
 
-            task.execute(String.format(TWITCH_API_URL, channelMessage, 0));
-        } else {
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.parse(videoArray.get(i).getVideoUrl()), "video/mp4");
-                    startActivity(intent);//Goes to an external app like MX Player
-                }
-            });
+        GetTwitchVideos task = new GetTwitchVideos();
 
-            getTwitchVideos task = new getTwitchVideos();
-
-            task.execute(String.format(AZUBU_API_URL, channelMessage, 0));
-        }
+        task.execute(String.format(TWITCH_API_URL, channelMessage, 0));
 
         process.show();
     }
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int i) {
-        if (i == SCROLL_STATE_IDLE ) {
-            if (absListView.getLastVisiblePosition() >= absListView.getCount() - 2) {
+        if (i == SCROLL_STATE_IDLE) {/**/
+            if (absListView.getLastVisiblePosition() >= absListView.getCount() - 3) {
 
-                getTwitchVideos task = new getTwitchVideos();
+                GetTwitchVideos task = new GetTwitchVideos();
 
-                if (!sentRequest){//Checks to see a getTwitchVideos task is already running
-                    if (websiteMessage!=null && websiteMessage.equals("Twitch.tv")) {//fixes the app crashing when using Up navigation
-
-                        task.execute(String.format(TWITCH_API_URL, channelMessage, videoArray.size()));
-                    } else {
-
-                        task.execute(String.format(AZUBU_API_URL, channelMessage, videoArray.size()));
-                    }
+                if (!sentRequest) {//Checks to see a GetTwitchVideos task is already running
+                    task.execute(String.format(TWITCH_API_URL, channelMessage, videoArray.size()));
                 }
             }
         }
@@ -150,7 +125,6 @@ public class TwitchVideoList extends Activity implements AbsListView.OnScrollLis
         public VideoAdapter(List<Video> videos) {
             this.videos = videos;
         }
-
 
         @Override
         public int getCount() {
@@ -217,7 +191,7 @@ public class TwitchVideoList extends Activity implements AbsListView.OnScrollLis
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
-    private class getTwitchVideos extends AsyncTask<String, Object, List<Video>> {
+    private class GetTwitchVideos extends AsyncTask<String, Object, List<Video>> {
         @Override
         protected List<Video> doInBackground(String... urls) {
             List<Video> videos = new ArrayList<Video>();
@@ -226,12 +200,7 @@ public class TwitchVideoList extends Activity implements AbsListView.OnScrollLis
                 URL url = new URL(urls[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 InputStream content = new BufferedInputStream(urlConnection.getInputStream());//get the stream of jsons
-                if (websiteMessage.equals("Twitch.tv")) {
-
-                    videos = TwitchVideoJSONParser.getVideos(content);
-                } else {
-                    videos = AzubuVideoJSONParser.getVideos(content);
-                }
+                videos = TwitchVideoJSONParser.getVideos(content);
                 urlConnection.disconnect();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -242,9 +211,8 @@ public class TwitchVideoList extends Activity implements AbsListView.OnScrollLis
         @Override
         protected void onPostExecute(List<Video> result) {
             videoArray.addAll(result);
-
             adapter.notifyDataSetChanged();
-            sentRequest=false;
+            sentRequest = false;
             process.dismiss();
         }
     }
